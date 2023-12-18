@@ -38,7 +38,7 @@ $(document).ready(function() {
         }
     });
 
-    // Optional: You can use buttons or other triggers to navigate as well
+    // Button click handlers
     $("#page1").click(function() {
         nextPage();
     });
@@ -49,6 +49,18 @@ $(document).ready(function() {
 
     $("#page3").click(function() {
         nextPage();
+    });
+
+    // Explore Features button click handler
+    $("#exploreFeatures").on("click", function() {
+        // Redirect to the features.html page
+        window.location.href = 'features.html';
+    });
+
+    // Join Now button click handler
+    $("#joinNow").on("click", function() {
+        // Redirect to the join.html page (replace with the actual page)
+        window.location.href = 'login.html';
     });
 
     showPage(currentPage);
