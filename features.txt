@@ -1,7 +1,0 @@
-Features That Matter
-Pass Manager goes beyond the basics, offering a comprehensive set of features to simplify your digital life:
-
-•Secure Password Generation: Create strong, unique passwords with just a click.
-•Password Storage: Safely store and organize your passwords in one secure vault.
-•Cross-Platform Compatibility: Access your passwords anytime, anywhere, on any device.
-•Secure Sharing: Safely share passwords with trusted contacts without compromising security.
