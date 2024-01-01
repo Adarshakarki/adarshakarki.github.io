@@ -11,45 +11,56 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['login_email']) && isset($_POST['login_password'])) {
-        // Login Form Submitted
-        $email = $_POST['login_email'];
-        $password = $_POST['login_password'];
+    if (isset($_POST['email']) && isset($_POST['password'])) {
+        $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+        $password = $_POST['password'];
 
-        $checkEmailQuery = "SELECT * FROM users WHERE email = '$email'";
-        $checkResult = $conn->query($checkEmailQuery);
+        if (!$email) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid email format. Please enter a valid email address.']);
+            exit;
+        }
 
-        if ($checkResult->num_rows > 0) {
+        $action = $_POST['action'];
+        $checkEmailQuery = "SELECT * FROM users WHERE email = ?";
+        $stmt = $conn->prepare($checkEmailQuery);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $checkResult = $stmt->get_result();
+        
+        if ($checkResult->num_rows > 0 && $action === 'login') {
+            // Email exists, proceed with login logic
             $user = $checkResult->fetch_assoc();
             $hashedPassword = $user['password'];
 
             if (password_verify($password, $hashedPassword)) {
-                echo "Login successful!";
+                // Login successful
+                echo json_encode(['status' => 'success', 'message' => 'Login successful']);
+                exit;
             } else {
-                echo "Incorrect password. Please try again.";
+                // Incorrect password
+                echo json_encode(['status' => 'error', 'message' => 'Incorrect password. Please try again.']);
+                exit;
+            }
+        } elseif ($checkResult->num_rows === 0 && $action === 'signup') {
+            // Email doesn't exist, proceed with signup logic
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $insertUserQuery = "INSERT INTO users (email, password) VALUES (?, ?)";
+            $stmt = $conn->prepare($insertUserQuery);
+            $stmt->bind_param("ss", $email, $hashedPassword);
+
+            if ($stmt->execute()) {
+                // Account created successfully
+                echo json_encode(['status' => 'success', 'message' => 'Account created successfully']);
+                exit;
+            } else {
+                // Error creating account
+                echo json_encode(['status' => 'error', 'message' => 'Error creating account. Please try again later.']);
+                exit;
             }
         } else {
-            echo "No account found for the given email.";
-        }
-    } elseif (isset($_POST['signup_email']) && isset($_POST['signup_password'])) {
-        // Signup Form Submitted
-        $signup_email = $_POST['signup_email'];
-        $signup_password = $_POST['signup_password'];
-
-        $checkEmailQuery = "SELECT * FROM users WHERE email = '$signup_email'";
-        $checkResult = $conn->query($checkEmailQuery);
-
-        if ($checkResult->num_rows > 0) {
-            echo "This email is already registered. Please use a different email.";
-        } else {
-            $hashedPassword = password_hash($signup_password, PASSWORD_DEFAULT);
-            $insertUserQuery = "INSERT INTO users (email, password) VALUES ('$signup_email', '$hashedPassword')";
-
-            if ($conn->query($insertUserQuery) === TRUE) {
-                echo "Account created successfully!";
-            } else {
-                echo "Error: " . $insertUserQuery . "<br>" . $conn->error;
-            }
+            // Invalid action
+            echo json_encode(['status' => 'error', 'message' => 'Invalid action.']);
+            exit;
         }
     }
 }
