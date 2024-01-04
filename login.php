@@ -10,7 +10,6 @@
 
 <body>
     <?php
-    // Display the notification message
     if (!empty($notification)) {
         echo "<script>alert('$notification');</script>";
     }

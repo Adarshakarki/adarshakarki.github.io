@@ -10,15 +10,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$notification = ""; // Initialize an empty variable to store notification messages
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['email']) && isset($_POST['password'])) {
         $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
         $password = $_POST['password'];
 
         if (!$email) {
-            $notification = "Invalid email format. Please enter a valid email address.";
+            $notification = 'Invalid email format. Please enter a valid email address.';
         } else {
             $action = $_POST['action'];
             $checkEmailQuery = "SELECT * FROM users WHERE email = ?";
@@ -26,15 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $checkResult = $stmt->get_result();
-            
+
             if ($checkResult->num_rows > 0 && $action === 'login') {
                 $user = $checkResult->fetch_assoc();
                 $hashedPassword = $user['password'];
 
                 if (password_verify($password, $hashedPassword)) {
-                    $notification = "Login successful!";
+                    $notification = 'Login successful!';
+                    // You can add additional logic here if needed
                 } else {
-                    $notification = "Incorrect password. Please try again.";
+                    $notification = 'Incorrect password. Please try again.';
                 }
             } elseif ($checkResult->num_rows === 0 && $action === 'signup') {
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -43,14 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param("ss", $email, $hashedPassword);
 
                 if ($stmt->execute()) {
-                    $notification = "Account created successfully!";
+                    $notification = 'Account created successfully!';
+                    // You can add additional logic here if needed
                 } else {
-                    $notification = "Error creating account. Please try again later.";
+                    $notification = 'Error creating account. Please try again later.';
                 }
             } else {
-                $notification = "Invalid action.";
+                $notification = 'Invalid action.';
             }
         }
     }
 }
+
+$conn->close();
 ?>
