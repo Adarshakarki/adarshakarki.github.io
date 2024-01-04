@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'];
 
         if (!$email) {
-            echo '<script>alert("Invalid email format. Please enter a valid email address.");</script>';
+            echo '<script>alert("Invalid email format. Please enter a valid email address."); window.location.href = "login.html";</script>';
             exit(); // Terminate the script
         } else {
             $action = $_POST['action'];
@@ -31,11 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $hashedPassword = $user['password'];
 
                 if (password_verify($password, $hashedPassword)) {
-                    echo '<script>alert("Login successful!");</script>';
+                    echo '<script>alert("Login successful!"); window.location.href = "login.html";</script>';
                     exit(); // Terminate the script
-                    // You can add additional logic here if needed
                 } else {
-                    echo '<script>alert("Incorrect password. Please try again.");</script>';
+                    echo '<script>alert("Incorrect password. Please try again."); window.location.href = "login.html";</script>';
                     exit(); // Terminate the script
                 }
             } elseif ($checkResult->num_rows === 0 && $action === 'signup') {
@@ -45,15 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param("ss", $email, $hashedPassword);
 
                 if ($stmt->execute()) {
-                    echo '<script>alert("Account created successfully!");</script>';
+                    echo '<script>alert("Account created successfully!"); window.location.href = "login.html";</script>';
                     exit(); // Terminate the script
-                    // You can add additional logic here if needed
                 } else {
-                    echo '<script>alert("Error creating account. Please try again later.");</script>';
+                    echo '<script>alert("Error creating account. Please try again later."); window.location.href = "login.html";</script>';
                     exit(); // Terminate the script
                 }
             } else {
-                echo '<script>alert("Invalid action.");</script>';
+                echo '<script>alert("Invalid action."); window.location.href = "login.html";</script>';
                 exit(); // Terminate the script
             }
         }
