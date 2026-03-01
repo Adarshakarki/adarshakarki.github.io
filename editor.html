@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Post — Editor</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .editor-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 6rem;
+    }
+
+    .editor-header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .editor-header h1 {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    .editor-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    input, select, textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    select option { background: var(--surface); }
+
+    textarea {
+      resize: vertical;
+      min-height: 300px;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.7;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .toolbar-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      padding: 0.3em 0.75em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .toolbar-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .hint {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+      letter-spacing: 0.04em;
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0e0e0e;
+      border: none;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.8em 2em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--accent2); }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.8em 2em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Output Panel */
+    .output-panel {
+      margin-top: 2.5rem;
+      display: none;
+    }
+
+    .output-panel.visible { display: block; }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .output-title {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.3em 0.8em;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { border-color: #4caf50; color: #4caf50; }
+
+    .output-code {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--text);
+      overflow-x: auto;
+      white-space: pre;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .steps {
+      margin-top: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .steps-title {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .steps ol {
+      padding-left: 1.2rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 2;
+    }
+
+    .steps ol li { margin: 0; }
+    .steps code {
+      font-family: var(--mono);
+      font-size: 0.8em;
+      background: var(--surface2);
+      padding: 0.1em 0.4em;
+      color: var(--accent2);
+    }
+
+    /* Preview */
+    .preview-section {
+      margin-top: 2.5rem;
+      display: none;
+    }
+
+    .preview-section.visible { display: block; }
+
+    .preview-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .preview-box {
+      border: 1px solid var(--border);
+      padding: 2rem;
+      background: var(--surface);
+    }
+
+    .preview-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .preview-title {
+      font-family: var(--serif);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .preview-excerpt {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 600px) {
+      .fields { grid-template-columns: 1fr; }
+      .editor-wrap { padding: 2rem 1rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="index.html">Logged by Adarsha</a>
+      <nav>
+        <a href="index.html#/">Home</a>
+        <a href="editor.html" class="active">New Post</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="editor-wrap">
+
+    <div class="editor-header">
+      <h1>Write a New Post</h1>
+      <p>Fill in the details below, then copy the generated code into <code style="font-family:var(--mono);color:var(--accent);font-size:0.85em">posts.js</code> and push to GitHub.</p>
+    </div>
+
+    <div class="fields">
+      <div class="field">
+        <label for="f-title">Title</label>
+        <input id="f-title" type="text" placeholder="My Interesting Post" />
+      </div>
+      <div class="field">
+        <label for="f-tag">Category / Tag</label>
+        <input id="f-tag" type="text" placeholder="Technology" list="tag-suggestions" />
+        <datalist id="tag-suggestions">
+          <option value="Technology">
+          <option value="Craft">
+          <option value="Meta">
+          <option value="Ideas">
+          <option value="Personal">
+        </datalist>
+      </div>
+      <div class="field">
+        <label for="f-date">Date</label>
+        <input id="f-date" type="date" />
+      </div>
+      <div class="field">
+        <label for="f-featured">Featured Post?</label>
+        <select id="f-featured">
+          <option value="false">No</option>
+          <option value="true">Yes (shows large at top)</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label for="f-excerpt">Excerpt (shown on home page)</label>
+        <input id="f-excerpt" type="text" placeholder="A short summary of what this post is about..." />
+      </div>
+      <div class="field full">
+        <label>Content (HTML)</label>
+        <div class="toolbar">
+          <button class="toolbar-btn" data-wrap="<p>|</p>">¶ Paragraph</button>
+          <button class="toolbar-btn" data-wrap="<h2>|</h2>">H2 Heading</button>
+          <button class="toolbar-btn" data-wrap="<h3>|</h3>">H3 Heading</button>
+          <button class="toolbar-btn" data-wrap="<strong>|</strong>">Bold</button>
+          <button class="toolbar-btn" data-wrap="<em>|</em>">Italic</button>
+          <button class="toolbar-btn" data-wrap="<a href=&quot;URL&quot;>|</a>">Link</button>
+          <button class="toolbar-btn" data-wrap="<blockquote>|</blockquote>">" Quote</button>
+          <button class="toolbar-btn" data-wrap="<code>|</code>">Inline Code</button>
+          <button class="toolbar-btn" data-insert="<pre><code>paste code here</code></pre>">Code Block</button>
+          <button class="toolbar-btn" data-insert="<ul>&#10;  <li>Item one</li>&#10;  <li>Item two</li>&#10;</ul>">• List</button>
+          <button class="toolbar-btn" data-insert="<hr>">― Divider</button>
+          <button class="toolbar-btn" id="btn-img">Image</button>
+        </div>
+        <textarea id="f-content" placeholder="<p>Start writing your post here...</p>
+
+<h2>A Section</h2>
+<p>More content...</p>
+
+<blockquote>A memorable quote.</blockquote>"></textarea>
+        <div class="hint">Write in HTML. Use the buttons above for quick formatting.</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" id="btn-generate">Generate Post Code</button>
+      <button class="btn-secondary" id="btn-preview">Preview Card</button>
+      <button class="btn-secondary" id="btn-clear">Clear</button>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-section" id="preview-section">
+      <div class="preview-label">Card Preview (how it looks on home page)</div>
+      <div class="preview-box">
+        <div class="preview-tag" id="prev-tag"></div>
+        <div class="preview-title" id="prev-title"></div>
+        <div class="preview-excerpt" id="prev-excerpt"></div>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="output-panel" id="output-panel">
+      <div class="output-header">
+        <span class="output-title">Generated Code — paste at the top of posts.js</span>
+        <button class="copy-btn" id="btn-copy">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy to Clipboard
+        </button>
+      </div>
+      <div class="output-code" id="output-code"></div>
+
+      <div class="steps">
+        <div class="steps-title">Next Steps</div>
+        <ol>
+          <li>Click <strong>Copy to Clipboard</strong> above</li>
+          <li>Open <code>posts.js</code> in your code editor</li>
+          <li>Paste the code at the <strong>very top</strong> of the <code>POSTS</code> array (right after the opening <code>[</code>), followed by a comma</li>
+          <li>Save the file, commit, and push to GitHub</li>
+        </ol>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <span>© 2026 Logged by Adarsha</span>
+      <span>Hosted on <a href="https://pages.github.com" style="color:var(--accent)">GitHub Pages</a></span>
+    </div>
+  </footer>
+
+  <script>
+    // ── Image button ──
+    document.getElementById('btn-img').addEventListener('click', () => {
+      const filename = prompt('Image filename (e.g. tune-topia-screenshot.png):\nFile should be inside your images/ folder.');
+      if (!filename) return;
+      const alt = prompt('Alt text (describe the image briefly):') || '';
+      const ta = document.getElementById('f-content');
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const tag = `\n<img src="images/${filename.replace(/^images\//, '')}" alt="${alt}">\n`;
+      ta.setRangeText(tag, start, end, 'end');
+      ta.focus();
+    });
+
+    // ── Set today's date as default ──
+    const dateInput = document.getElementById('f-date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+
+    // ── Toolbar buttons ──
+    document.querySelectorAll('.toolbar-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ta = document.getElementById('f-content');
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const selected = ta.value.substring(start, end);
+
+        if (btn.dataset.wrap) {
+          const [open, close] = btn.dataset.wrap.split('|');
+          const replacement = open + (selected || 'text') + close;
+          ta.setRangeText(replacement, start, end, 'end');
+        } else if (btn.dataset.insert) {
+          const ins = btn.dataset.insert.replace(/&#10;/g, '\n');
+          ta.setRangeText('\n' + ins + '\n', start, end, 'end');
+        }
+        ta.focus();
+      });
+    });
+
+    // ── Slug from title ──
+    function slugify(str) {
+      return str.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+    }
+
+    // ── Generate ──
+    document.getElementById('btn-generate').addEventListener('click', () => {
+      const title   = document.getElementById('f-title').value.trim();
+      const tag     = document.getElementById('f-tag').value.trim();
+      const date    = document.getElementById('f-date').value;
+      const excerpt = document.getElementById('f-excerpt').value.trim();
+      const content = document.getElementById('f-content').value.trim();
+      const featured = document.getElementById('f-featured').value;
+
+      if (!title || !date || !content) {
+        alert('Please fill in at least Title, Date, and Content.');
+        return;
+      }
+
+      const id = slugify(title) || 'my-post';
+
+      const code =
+`{
+  id: "${id}",
+  title: "${title.replace(/"/g, '\\"')}",
+  date: "${date}",
+  tag: "${tag.replace(/"/g, '\\"')}",
+  excerpt: "${excerpt.replace(/"/g, '\\"')}",
+  featured: ${featured},
+  content: \`
+    ${content.replace(/`/g, '\\`').split('\n').join('\n    ')}
+  \`
+},`;
+
+      document.getElementById('output-code').textContent = code;
+      document.getElementById('output-panel').classList.add('visible');
+      document.getElementById('output-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // ── Preview ──
+    document.getElementById('btn-preview').addEventListener('click', () => {
+      const title   = document.getElementById('f-title').value.trim() || 'Post Title';
+      const tag     = document.getElementById('f-tag').value.trim() || 'Tag';
+      const excerpt = document.getElementById('f-excerpt').value.trim() || 'Your excerpt will appear here.';
+
+      document.getElementById('prev-tag').textContent = tag;
+      document.getElementById('prev-title').textContent = title;
+      document.getElementById('prev-excerpt').textContent = excerpt;
+      document.getElementById('preview-section').classList.add('visible');
+      document.getElementById('preview-section').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ── Copy ──
+    document.getElementById('btn-copy').addEventListener('click', async () => {
+      const code = document.getElementById('output-code').textContent;
+      try {
+        await navigator.clipboard.writeText(code);
+        const btn = document.getElementById('btn-copy');
+        btn.classList.add('copied');
+        btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 12 4 10"/></svg> Copied!`;
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy to Clipboard`;
+        }, 2500);
+      } catch {
+        alert('Copy failed — please select the code and copy manually (Ctrl+C / Cmd+C).');
+      }
+    });
+
+    // ── Clear ──
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      if (!confirm('Clear all fields?')) return;
+      ['f-title','f-tag','f-excerpt','f-content'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('f-date').value = today;
+      document.getElementById('f-featured').value = 'false';
+      document.getElementById('output-panel').classList.remove('visible');
+      document.getElementById('preview-section').classList.remove('visible');
+    });
+  </script>
+</body>
+</html>
