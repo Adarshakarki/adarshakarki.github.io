@@ -61,7 +61,7 @@ header {
   height: 64px;
 }
 
-.logo {
+.logo-full{
   font-family: var(--serif);
   font-size: 1.4rem;
   font-weight: 700;
@@ -69,8 +69,12 @@ header {
   color: var(--white);
 }
 
-.logo span {
-  color: var(--accent);
+.logo-short {
+  display: none;
+  font-family: var(--serif);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color:var(--white)
 }
 
 nav {
@@ -88,9 +92,17 @@ nav a {
   transition: color 0.2s;
 }
 
+.nav-icon {
+  display: none;
+}
+
+nav a .nav-text {
+  display: inline;
+}
+
 nav a:hover, nav a.active { color: var(--accent); }
 
-/* ── Hero (index only) ── */
+/* ── Hero ── */
 .hero {
   max-width: 1200px;
   margin: 0 auto;
@@ -495,21 +507,41 @@ footer {
 .post-card:nth-child(n+6) { animation-delay: 0.35s; }
 
 /* ── Responsive ── */
+
 @media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; gap: 2rem; }
-  .hero-meta { align-items: flex-start; flex-direction: row; align-items: center; }
+  .hero,
+  .main-grid,
+  .post-page {
+    grid-template-columns: 1fr;
+  }
+
+  .hero { gap: 2rem; }
+
+  .hero-meta {
+    flex-direction: row;
+    align-items: center;
+  }
+
   .issue-num { font-size: 4rem; }
-  .main-grid { grid-template-columns: 1fr; }
-  .sidebar { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 2rem; }
-  .post-page { grid-template-columns: 1fr; }
+
+  .sidebar {
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 2rem 0 0 0;
+  }
 }
 
 @media (max-width: 600px) {
-  .header-inner { padding: 0 1rem; }
-  nav { gap: 1rem; }
-  .hero { padding: 3rem 1rem 2rem; }
-  .main-grid { padding: 2rem 1rem; }
-  .post-page { padding: 2rem 1rem; }
-  .footer-inner { flex-direction: column; gap: 0.5rem; text-align: center; }
-  .post-card { grid-template-columns: 1fr; }
+  .logo-full { display: none; }
+  .logo-short { display: block; }
+
+  nav { gap: 1.5rem; }
+
+  nav a .nav-text { display: none; }
+
+  .nav-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
 }

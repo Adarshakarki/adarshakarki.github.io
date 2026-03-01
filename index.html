@@ -6,6 +6,9 @@
   <title>Logged by Adarsha</title>
   <link rel="icon" type="image/x-icon" href="images/faviconlogo.png">
   <meta name="description" content="A personal blog about technology, craft, and ideas." />
+  <meta name="author" content="Adarsha Karki">
+  <meta name="theme-color" content="#0e0e0e">
+  <link rel="canonical" href="https://adarshakarki.github.io/">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Logged by Adarsha" />
@@ -19,13 +22,29 @@
   <!-- ── Header ── -->
   <header>
     <div class="header-inner">
-      <a class="logo" href="#/">Logged by Adarsha</a>
-      <nav>
-        <a href="#/" class="active">Home</a>
-        <a href="#/tag/Projects">Projects</a>
-        <a href="#/tag/Introduction">Introduction</a>
-        <a href="editor.html">+ New Post</a>
-      </nav>
+      <a class="logo-full" href="#/">Logged by Adarsha</a>
+      <a class="logo-short" href="#/">Adalog</a>
+<nav>
+  <a href="#/" class="active" aria-label="Home">
+    <span class="nav-text">Home</span>
+    <i data-lucide="house" class="nav-icon"></i>
+  </a>
+
+  <a href="#/tag/Projects" aria-label="Projects">
+    <span class="nav-text">Projects</span>
+    <i data-lucide="folder-kanban" class="nav-icon"></i>
+  </a>
+
+  <a href="#/tag/Introduction" aria-label="Introduction">
+    <span class="nav-text">Intro</span>
+    <i data-lucide="user-round" class="nav-icon"></i>
+  </a>
+
+  <a href="editor.html" aria-label="New Post">
+    <span class="nav-text">New</span>
+    <i data-lucide="message-circle-plus" class="nav-icon"></i>
+  </a>
+</nav>
     </div>
   </header>
 
@@ -39,6 +58,11 @@
       <span>Hosted on <a href="https://pages.github.com" style="color:var(--accent)">GitHub Pages</a></span>
     </div>
   </footer>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+</script>
 
   <!-- Posts data must come before app.js -->
   <script src="posts.js"></script>

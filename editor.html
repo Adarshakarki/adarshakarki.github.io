@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>New Post — Editor</title>
+  <title>New Post - Editor</title>
+    <link rel="icon" type="image/x-icon" href="images/faviconlogo.png">
   <link rel="stylesheet" href="style.css" />
   <style>
     .editor-wrap {
@@ -74,10 +75,118 @@
       border-color: var(--accent);
     }
 
+    /* Custom calendar */
+    .date-trigger {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      padding: 0.7rem 0.9rem;
+      width: 100%;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .date-trigger:hover,
+    .date-trigger.open { border-color: var(--accent); }
+
+    .date-trigger-placeholder { color: var(--text-muted); }
+
+    .date-trigger svg { opacity: 0.5; flex-shrink: 0; }
+
+    .cal-popup {
+      display: none;
+      position: absolute;
+      z-index: 200;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      width: 280px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      margin-top: 2px;
+    }
+
+    .cal-popup.open { display: block; }
+
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cal-nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+
+    .cal-nav-btn:hover { color: var(--accent); }
+
+    .cal-month-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .cal-grid {
+      padding: 0.75rem;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+
+    .cal-dow {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 0.3rem 0;
+    }
+
+    .cal-day {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      text-align: center;
+      padding: 0.45rem 0;
+      cursor: pointer;
+      color: var(--text);
+      transition: background 0.15s, color 0.15s;
+      border-radius: 2px;
+    }
+
+    .cal-day:hover { background: var(--surface2); color: var(--accent); }
+
+    .cal-day.today { color: var(--accent); font-weight: 500; }
+
+    .cal-day.selected {
+      background: var(--accent);
+      color: #0e0e0e;
+      font-weight: 500;
+    }
+
+    .cal-day.selected:hover { background: var(--accent2); color: #0e0e0e; }
+
+    .cal-day.empty { pointer-events: none; }
+
     select option { background: var(--surface); }
 
     textarea {
-      resize: vertical;
+      resize: none;
       min-height: 300px;
       font-family: var(--mono);
       font-size: 0.82rem;
@@ -305,10 +414,25 @@
 
   <header>
     <div class="header-inner">
-      <a class="logo" href="index.html">Logged by Adarsha</a>
+      <a class="logo-full" href="index.html">Logged by Adarsha</a>
+      <a class="logo-short" href="index.html">Adalog</a>
       <nav>
-        <a href="index.html#/">Home</a>
-        <a href="editor.html" class="active">New Post</a>
+        <a href="index.html#/" aria-label="Home">
+          <span class="nav-text">Home</span>
+          <i data-lucide="house" class="nav-icon"></i>
+        </a>
+        <a href="index.html#/tag/Projects" aria-label="Projects">
+          <span class="nav-text">Projects</span>
+          <i data-lucide="folder-kanban" class="nav-icon"></i>
+        </a>
+        <a href="index.html#/tag/Introduction" aria-label="Introduction">
+          <span class="nav-text">Intro</span>
+          <i data-lucide="user-round" class="nav-icon"></i>
+        </a>
+        <a href="editor.html" class="active" aria-label="New Post">
+          <span class="nav-text">New</span>
+          <i data-lucide="message-circle-plus" class="nav-icon"></i>
+        </a>
       </nav>
     </div>
   </header>
@@ -336,9 +460,25 @@
           <option value="Personal">
         </datalist>
       </div>
-      <div class="field">
+      <div class="field" style="position:relative;">
         <label for="f-date">Date</label>
-        <input id="f-date" type="date" />
+        <input id="f-date" type="hidden" />
+        <button type="button" class="date-trigger" id="date-trigger" aria-label="Pick a date">
+          <span id="date-trigger-text" class="date-trigger-placeholder">Select a date</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </button>
+        <div class="cal-popup" id="cal-popup">
+          <div class="cal-nav">
+            <button type="button" class="cal-nav-btn" id="cal-prev">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="cal-month-label" id="cal-month-label"></span>
+            <button type="button" class="cal-nav-btn" id="cal-next">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
       </div>
       <div class="field">
         <label for="f-featured">Featured Post?</label>
@@ -352,7 +492,7 @@
         <input id="f-excerpt" type="text" placeholder="A short summary of what this post is about..." />
       </div>
       <div class="field full">
-        <label>Content (HTML)</label>
+        <label for="f-content">Content (HTML)</label>
         <div class="toolbar">
           <button class="toolbar-btn" data-wrap="<p>|</p>">¶ Paragraph</button>
           <button class="toolbar-btn" data-wrap="<h2>|</h2>">H2 Heading</button>
@@ -424,6 +564,9 @@
     </div>
   </footer>
 
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>lucide.createIcons();</script>
+
   <script>
     // ── Image button ──
     document.getElementById('btn-img').addEventListener('click', () => {
@@ -438,10 +581,121 @@
       ta.focus();
     });
 
-    // ── Set today's date as default ──
-    const dateInput = document.getElementById('f-date');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.value = today;
+    // ── Custom Calendar ──
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+    const dateInput   = document.getElementById('f-date');
+    const trigger     = document.getElementById('date-trigger');
+    const triggerText = document.getElementById('date-trigger-text');
+    const calPopup    = document.getElementById('cal-popup');
+    const calGrid     = document.getElementById('cal-grid');
+    const calLabel    = document.getElementById('cal-month-label');
+
+    const now = new Date();
+    let calYear  = now.getFullYear();
+    let calMonth = now.getMonth();
+    let selectedDate = null;
+
+    // init to today
+    selectedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    dateInput.value = fmtISO(selectedDate);
+    triggerText.textContent = fmtDisplay(selectedDate);
+    triggerText.classList.remove('date-trigger-placeholder');
+
+    function fmtISO(d) {
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${d.getFullYear()}-${mm}-${dd}`;
+    }
+
+    function fmtDisplay(d) {
+      return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+    }
+
+    function renderCalendar() {
+      calLabel.textContent = `${MONTHS[calMonth]} ${calYear}`;
+      calGrid.innerHTML = '';
+
+      DAYS.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-dow';
+        el.textContent = d;
+        calGrid.appendChild(el);
+      });
+
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day empty';
+        calGrid.appendChild(el);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day';
+        el.textContent = d;
+
+        const isToday = d === now.getDate() && calMonth === now.getMonth() && calYear === now.getFullYear();
+        if (isToday) el.classList.add('today');
+
+        if (selectedDate &&
+            d === selectedDate.getDate() &&
+            calMonth === selectedDate.getMonth() &&
+            calYear === selectedDate.getFullYear()) {
+          el.classList.add('selected');
+        }
+
+        el.addEventListener('click', () => {
+          selectedDate = new Date(calYear, calMonth, d);
+          dateInput.value = fmtISO(selectedDate);
+          triggerText.textContent = fmtDisplay(selectedDate);
+          triggerText.classList.remove('date-trigger-placeholder');
+          closeCalendar();
+        });
+
+        calGrid.appendChild(el);
+      }
+    }
+
+    function openCalendar() {
+      calPopup.classList.add('open');
+      trigger.classList.add('open');
+      if (selectedDate) { calYear = selectedDate.getFullYear(); calMonth = selectedDate.getMonth(); }
+      renderCalendar();
+    }
+
+    function closeCalendar() {
+      calPopup.classList.remove('open');
+      trigger.classList.remove('open');
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      calPopup.classList.contains('open') ? closeCalendar() : openCalendar();
+    });
+
+    document.getElementById('cal-prev').addEventListener('click', (e) => {
+      e.stopPropagation();
+      calMonth--;
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    });
+
+    document.getElementById('cal-next').addEventListener('click', (e) => {
+      e.stopPropagation();
+      calMonth++;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderCalendar();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!calPopup.contains(e.target) && e.target !== trigger) closeCalendar();
+    });
+
+    const today = fmtISO(now);
 
     // ── Toolbar buttons ──
     document.querySelectorAll('.toolbar-btn').forEach(btn => {
@@ -540,7 +794,10 @@
     document.getElementById('btn-clear').addEventListener('click', () => {
       if (!confirm('Clear all fields?')) return;
       ['f-title','f-tag','f-excerpt','f-content'].forEach(id => document.getElementById(id).value = '');
-      document.getElementById('f-date').value = today;
+      selectedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      dateInput.value = fmtISO(selectedDate);
+      triggerText.textContent = fmtDisplay(selectedDate);
+      triggerText.classList.remove('date-trigger-placeholder');
       document.getElementById('f-featured').value = 'false';
       document.getElementById('output-panel').classList.remove('visible');
       document.getElementById('preview-section').classList.remove('visible');
