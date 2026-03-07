@@ -1,11 +1,3 @@
-// ─────────────────────────────────────────────
-//  POSTS DATA
-//  To add a new post, copy one of the objects
-//  below and paste it at the top of the array.
-//  Supported content tags: h2, h3, p, blockquote,
-//  ul/li, ol/li, code, pre>code, a, hr, img
-// ─────────────────────────────────────────────
-
 const POSTS = [
   {
     id: "hi-im-adarsha",
@@ -119,4 +111,55 @@ const POSTS = [
       <p>That's everything so far. I'm currently going deeper on Python and actively working on Tune Topia. More posts are coming - deeper write-ups on Emotion Detection, Tune Topia's architecture, and Crop Compass when I'm ready to talk about it properly. If you want to collaborate on anything or just say hi, find me at <a href="https://adarshakarki.com.np" target="_blank">adarshakarki.com.np</a>.</p>
     `
   }
+  ,
+{
+  id: "arc-inspired-chrome-extensions",
+  title: "Arc Inspired Me — So I Built It for Chrome",
+  date: "2026-03-07",
+  tag: "Projects",
+  excerpt: "Arc had the right ideas. I just made them work on Chrome.",
+  featured: false,
+  content: `
+    <p>Arc Browser changed how I think about browsing. It wasn't just a faster way to open websites — it was a rethink of what a browser could actually <em>do</em> for you. Features like Boosts, file renaming with AI, and link previews felt genuinely thoughtful.</p>
+
+    <p>But most of it was Mac-only, or locked behind Arc's ecosystem entirely. I use Chrome. Most people do.</p>
+
+    <p>So instead of waiting, I started porting the ideas I liked most into small, focused Chrome extensions. No heavy infrastructure. No accounts. Just open-source tools that solve real problems.</p>
+
+    <hr>
+
+    <h2>The Problems</h2>
+
+    <p><strong>Customizing websites requires a developer.</strong> Want to remove a sticky banner, change a font, or hide an annoying sidebar? Your options are basically: use DevTools, find a sketchy extension, or give up. Arc solved this with Boosts — a visual editor for injecting CSS and JS into any page. Chrome has nothing like it.</p>
+
+    <p><strong>Downloaded files are a mess.</strong> Files downloaded from the web almost never have useful names — <code>IMG_938472.png</code>, <code>download (4).jpg</code>, <code>a9sd82jd.png</code>. Arc used AI to fix this automatically, but that needs an API and adds cost. There had to be a simpler way.</p>
+
+    <p><strong>Link previews don't exist in Chrome.</strong> Arc's Peek let you glance at a link without opening it — a small popup, a quick look, then back to what you were doing. Chrome has no equivalent. Every link becomes a new tab, and tabs pile up fast.</p>
+
+    <hr>
+
+    <h2>Chisel</h2>
+    <p><strong>Arc-style page customization for Chrome.</strong></p>
+    <p>Change colors, swap fonts, hide elements, inject CSS or JavaScript — all without touching DevTools or writing a line of code. Built for people who want their web to look and behave the way they want it to.</p>
+    <p>- <a href="https://github.com/Adarshakarki/chisel" target="_blank">github.com/Adarshakarki/chisel</a></p>
+
+    <hr>
+
+    <h2>Contextual Tidy</h2>
+    <p><strong>Rename downloaded files based on where they came from.</strong></p>
+    <p>Instead of <code>IMG_938472.png</code>, you get <code>reddit_2026-03-07.png</code>. No AI, no external services, no API keys. Just clean filenames that actually mean something when you find them six months later.</p>
+    <p>- <a href="https://github.com/Adarshakarki/contextual-tidy" target="_blank">github.com/Adarshakarki/contextual-tidy</a></p>
+
+    <hr>
+
+    <h2>Peep</h2>
+    <p><strong>Arc-style link previews for Chrome.</strong></p>
+    <p>Shift-click any link and it opens in a floating overlay — same page, no new tab, no context switch. Each preview gets a random pastel border. Works on almost any site. Hit Esc when you're done.</p>
+    <p>- <a href="https://github.com/Adarshakarki/Peek" target="_blank">github.com/Adarshakarki/Peek</a></p>
+
+    <hr>
+
+    <p>Arc proved that browsers can be smarter. These extensions are my attempt to bring those ideas somewhere more people can actually use them. All three are open-source and built around real pain points — not feature lists.</p>
+  `
+}
 ];
